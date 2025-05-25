@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jogo da Memória das Princesas</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fbeff1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+      color: #c2185b;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    #tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(4, 120px);
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .carta {
+      width: 120px;
+      height: 160px;
+      background: #c2185b;
+      border-radius: 15px;
+      cursor: pointer;
+      position: relative;
+      perspective: 600px;
+    }
+
+    .carta.flipped .frente {
+      transform: rotateY(0deg);
+    }
+
+    .carta.flipped .verso {
+      transform: rotateY(180deg);
+    }
+
+    .frente,
+    .verso {
+      width: 100%;
+      height: 100%;
+      border-radius: 15px;
+      backface-visibility: hidden;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: transform 0.5s;
+    }
+
+    .frente {
+      background: #fff;
+      transform: rotateY(180deg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 3px solid #c2185b;
+    }
+
+    .frente img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+      /* igual ao card, para manter arredondamento */
+    }
+
+    .verso {
+      background: #c2185b;
+      transform: rotateY(0deg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.5rem;
+      color: #fff;
+      user-select: none;
+    }
+
+    #mensagem {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #4caf50;
+      margin-bottom: 10px;
+    }
+
+    #movimentos {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: #a31546;
+    }
+
+    button#btnReiniciar {
+      background-color: #c2185b;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 20px;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+    }
+
+    button#btnReiniciar:hover {
+      background-color: #a31546;
+    }
+
+    /* Confete */
+    .confete {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background-color: #c2185b;
+      opacity: 0.9;
+      top: 0;
+      left: 50%;
+      border-radius: 50%;
+      pointer-events: none;
+      animation-name: cair;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes cair {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.9;
+      }
+
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Responsivo */
+    @media (max-width: 500px) {
+      #tabuleiro {
+        grid-template-columns: repeat(2, 140px);
+        gap: 20px;
+      }
+
+      .carta {
+        width: 140px;
+        height: 180px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Jogo da Memória das Princesas</h1>
+  <div id="movimentos">Movimentos: 0</div>
+  <div id="tabuleiro"></div>
+  <div id="mensagem"></div>
+  <button id="btnReiniciar">Reiniciar Jogo</button>
+
+  <!-- Áudio -->
+  <audio id="audioAcerto" src="audio/acerto.mp3" preload="auto"></audio>
+  <audio id="audioTecla" src="audio/tecla.mp3" preload="auto"></audio>
+
+  <script>
+    const princesas = [
+      { nome: "Tiana", img: "img2/1.png" },
+      { nome: "Merida", img: "img2/2.png" },
+      { nome: "Bela", img: "img2/3.png" },
+      { nome: "Branca de Neve", img: "img2/4.png" },
+    ];
+
+    const tabuleiro = document.getElementById('tabuleiro');
+    const mensagem = document.getElementById('mensagem');
+    const btnReiniciar = document.getElementById('btnReiniciar');
+    const audioAcerto = document.getElementById('audioAcerto');
+    const audioTecla = document.getElementById('audioTecla');
+    const movimentosEl = document.getElementById('movimentos');
+
+    let cartas = [];
+    let primeiraCarta = null;
+    let segundaCarta = null;
+    let bloqueado = false;
+    let paresEncontrados = 0;
+    let movimentos = 0;
+
+    function embaralhar(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function criarCartas() {
+      cartas = [...princesas, ...princesas];
+      embaralhar(cartas);
+
+      tabuleiro.innerHTML = '';
+      cartas.forEach((carta, index) => {
+        const cartaEl = document.createElement('div');
+        cartaEl.classList.add('carta');
+        cartaEl.dataset.nome = carta.nome;
+
+        cartaEl.innerHTML = `
+          <div class="frente">
+            <img src="${carta.img}" alt="${carta.nome}" />
+          </div>
+          <div class="verso">?</div>
+        `;
+
+        cartaEl.addEventListener('click', () => virarCarta(cartaEl));
+
+        tabuleiro.appendChild(cartaEl);
+      });
+
+      primeiraCarta = null;
+      segundaCarta = null;
+      bloqueado = false;
+      paresEncontrados = 0;
+      movimentos = 0;
+      movimentosEl.innerText = `Movimentos: ${movimentos}`;
+      mensagem.innerText = "";
+      limparConfete();
+    }
+
+    function virarCarta(cartaEl) {
+      if (bloqueado) return;
+      if (cartaEl === primeiraCarta) return;
+
+      // Tocar som do clique
+      audioTecla.currentTime = 0;
+      audioTecla.play();
+
+      cartaEl.classList.add('flipped');
+
+      if (!primeiraCarta) {
+        primeiraCarta = cartaEl;
+        return;
+      }
+
+      segundaCarta = cartaEl;
+      bloquear();
+
+      movimentos++;
+      movimentosEl.innerText = `Movimentos: ${movimentos}`;
+
+      if (primeiraCarta.dataset.nome === segundaCarta.dataset.nome) {
+        paresEncontrados++;
+        limparCartas();
+        if (paresEncontrados === princesas.length) {
+          mensagem.innerText = "Parabéns! Você encontrou todos os pares!";
+          audioAcerto.currentTime = 0;
+          audioAcerto.play();
+          mostrarConfete();
+        }
+      } else {
+        setTimeout(() => {
+          primeiraCarta.classList.remove('flipped');
+          segundaCarta.classList.remove('flipped');
+          limparCartas();
+        }, 1000);
+      }
+    }
+
+    function bloquear() {
+      bloqueado = true;
+    }
+
+    function limparCartas() {
+      primeiraCarta = null;
+      segundaCarta = null;
+      bloqueado = false;
+    }
+
+    btnReiniciar.addEventListener('click', criarCartas);
+
+    // Função para criar confete
+    function mostrarConfete() {
+      const cores = ['#c2185b', '#e91e63', '#f48fb1', '#880e4f', '#ad1457'];
+      const quantidade = 100;
+
+      for (let i = 0; i < quantidade; i++) {
+        const confete = document.createElement('div');
+        confete.classList.add('confete');
+        confete.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+        confete.style.left = Math.random() * window.innerWidth + 'px';
+        confete.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        confete.style.width = confete.style.height = (Math.random() * 7 + 5) + 'px';
+        confete.style.animationDelay = (Math.random() * 3) + 's';
+        document.body.appendChild(confete);
+      }
+
+      // Remove confete depois de 5 segundos
+      setTimeout(limparConfete, 5000);
+    }
+
+    function limparConfete() {
+      document.querySelectorAll('.confete').forEach(c => c.remove());
+    }
+
+    criarCartas();
+  </script>
+</body>
+
+</html>

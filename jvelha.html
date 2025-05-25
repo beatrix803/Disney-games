@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="img/AbaA.png" type="image/png">
+  <title>Jogo da Velha</title>
+  <style>
+    body {
+      background-color: #83c7f2;
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+      position: relative;
+    }
+
+    .caixa-jogo {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+    }
+
+    #jogo {
+      width: 600px;
+      height: 600px;
+      border: 3px solid #000;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(80deg, #6cd3ff, #0066ff);
+    }
+
+    .linha {
+      display: flex;
+      flex: 1;
+    }
+
+    .casa {
+      flex: 1;
+      border-right: 2px solid #000;
+      border-bottom: 2px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    .linha:last-child .casa {
+      border-bottom: none;
+    }
+
+    .casa:last-child {
+      border-right: none;
+    }
+
+    .casa img {
+      width: 190px;
+      height: 120px;
+      object-fit: contain;
+    }
+
+    #resultado {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    #resposta {
+      font-size: 30px;
+      font-style: italic;
+      font-weight: bold;
+      color: #005f8e;
+      /* Azul mais forte */
+    }
+
+    .xis,
+    .bola,
+    .velha {
+      color: #005f8e;
+      /* Azul mais forte */
+      font-weight: bold;
+      font-size: 22px;
+    }
+
+    input[type=button] {
+      background-color: #3D94F6;
+      background-image: linear-gradient(to bottom, #3D94F6, #1E62D0);
+      border-radius: 20px;
+      border: 1px solid #000;
+      font-size: 30px;
+      color: white;
+      padding: 10px 40px;
+      text-shadow: 1px 1px 2px #000;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    input[type=button]:hover {
+      background-image: linear-gradient(to bottom, #1E62D0, #3D94F6);
+      transform: scale(1.05);
+    }
+
+    #logo-arial {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 150px;
+      height: auto;
+      opacity: 0.95;
+      z-index: 1000;
+    }
+  </style>
+</head>
+
+<body onload="recomeca()">
+  <div class="container">
+    <div class="caixa-jogo">
+      <div id="jogo">
+        <div class="linha">
+          <div class="casa" id="casa0" onclick="verifica(0)"></div>
+          <div class="casa" id="casa1" onclick="verifica(1)"></div>
+          <div class="casa" id="casa2" onclick="verifica(2)"></div>
+        </div>
+        <div class="linha">
+          <div class="casa" id="casa3" onclick="verifica(3)"></div>
+          <div class="casa" id="casa4" onclick="verifica(4)"></div>
+          <div class="casa" id="casa5" onclick="verifica(5)"></div>
+        </div>
+        <div class="linha">
+          <div class="casa" id="casa6" onclick="verifica(6)"></div>
+          <div class="casa" id="casa7" onclick="verifica(7)"></div>
+          <div class="casa" id="casa8" onclick="verifica(8)"></div>
+        </div>
+      </div>
+
+      <div id="resultado">
+        <p id="resposta">RESULTADO:</p>
+        <p id="xis" class="xis">PONTOS 🐟: 0</p>
+        <p id="bola" class="bola">PONTOS 🦀: 0</p>
+        <p id="velha" class="velha">VELHA: 0</p>
+        <input type="button" value="NOVO JOGO" onclick="recomeca()">
+      </div>
+    </div>
+  </div>
+
+  <img src="img/arial.png" id="logo-arial">
+
+  <!-- Música de fundo -->
+  <audio id="musica-fundo" src="audio/ariel.mp3" autoplay loop></audio>
+
+  <!-- Botão de som no canto superior direito -->
+  <div id="botao-som" onclick="alternarSom()"
+    style="position: fixed; top: 20px; right: 20px; z-index: 1000; cursor: pointer;">
+    <img id="icone-som" src="img/som.png" alt="Som ligado" width="40">
+  </div>
+
+  <script>
+    var casas = [9, 9, 9, 9, 9, 9, 9, 9, 9];
+    var vez = 1;
+    var IPontoX = 0;
+    var IPontoO = 0;
+    var IPontoVelha = 0;
+    var sResposta;
+
+    function verifica(casa) {
+      if (casas[casa] == 9) {
+        casas[casa] = vez;
+        let img = document.createElement("img");
+        img.src = vez === 1 ? "img/peixe.png" : "img/caranguejo.png";
+        document.getElementById("casa" + casa).appendChild(img);
+        vez *= -1;
+        confere();
+      }
+    }
+
+    function confere() {
+      var i;
+      var ganhou = false;
+      var acabou = true;
+
+      for (i = 0; i < casas.length; i++) {
+        if (casas[i] == 9) acabou = false;
+      }
+
+      var linhas = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+      ];
+
+      for (i = 0; i < linhas.length; i++) {
+        let [a, b, c] = linhas[i];
+        if (casas[a] == casas[b] && casas[b] == casas[c] && casas[a] != 9) {
+          ganhou = true;
+          if (casas[a] == -1) {
+            sResposta = "🦀 GANHOU!!!";
+            IPontoO++;
+            document.getElementById("bola").innerHTML = "PONTOS 🦀: " + IPontoO;
+          } else {
+            sResposta = "🐟 GANHOU!!!";
+            IPontoX++;
+            document.getElementById("xis").innerHTML = "PONTOS 🐟: " + IPontoX;
+          }
+          break;
+        }
+      }
+
+      if (!ganhou && acabou) {
+        sResposta = "VELHA...";
+        IPontoVelha++;
+        document.getElementById("velha").innerHTML = "VELHA: " + IPontoVelha;
+      }
+
+      if (ganhou || acabou) {
+        for (i = 0; i < 9; i++) {
+          casas[i] = 0;
+        }
+        document.getElementById("resposta").innerHTML = sResposta;
+        document.getElementById("resposta").style.color = "#d9eefd";
+        document.getElementById("resposta").style.fontSize = "xx-large";
+      }
+    }
+
+    function recomeca() {
+      for (let i = 0; i < casas.length; i++) {
+        casas[i] = 9;
+        document.getElementById("casa" + i).innerHTML = "";
+      }
+      document.getElementById("resposta").innerHTML = "RESULTADO:";
+      document.getElementById("resposta").style.fontSize = "large";
+      document.getElementById("resposta").style.color = "#d9eefd";
+      vez = 1;
+    }
+
+    // Controle de som
+    let somLigado = true;
+    const player = document.getElementById("musica-fundo");
+    const iconeSom = document.getElementById("icone-som");
+
+    function alternarSom() {
+      somLigado = !somLigado;
+      if (somLigado) {
+        player.play();
+        iconeSom.src = "img/som.png";
+        iconeSom.alt = "Som ligado";
+      } else {
+        player.pause();
+        iconeSom.src = "img/sem.png";
+        iconeSom.alt = "Som desligado";
+      }
+    }
+  </script>
+</body>
+
+</html>

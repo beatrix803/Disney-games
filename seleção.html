@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Seleção de Personagem</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      padding: 40px 20px;
+      margin: 0;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 32px;
+      margin-bottom: 30px;
+    }
+
+    #personagens {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .card {
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 160px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .card p {
+      margin: 10px 0;
+      font-weight: 600;
+      color: #444;
+    }
+
+    #detalhes {
+      display: none;
+      /* Esconde por padrão */
+      /* o resto já está definido... */
+    }
+
+
+    #detalhes img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    #mensagem {
+      font-size: 16px;
+      color: #2e7d32;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    #selecionarBtn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #selecionarBtn:hover {
+      background-color: #1b5e20;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        width: 45%;
+      }
+
+      #detalhes {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Selecione sua Personagem</h1>
+  <div id="personagens"></div>
+  <div id="mensagem"></div>
+  <div id="detalhes"></div>
+
+  <script>
+    fetch("https://raw.githubusercontent.com/beatrix803/minha-api-princesa/main/db.json")
+  .then(res => res.json())
+  .then(data => {
+    const princesas = data.princesas; // pega o array dentro do JSON
+
+    const container = document.getElementById("personagens");
+    const detalhes = document.getElementById("detalhes");
+    const mensagem = document.getElementById("mensagem");
+
+    princesas.forEach(princesa => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <img src="${princesa.imagem}" alt="${princesa.nome}">
+        <p>${princesa.nome}</p>
+      `;
+
+      card.addEventListener("click", () => {
+        detalhes.innerHTML = `
+          <h2>${princesa.nome}</h2>
+          <img src="${princesa.imagem}" alt="${princesa.nome}">
+          <p><strong>Filme:</strong> ${princesa.filme}</p>
+          <p>${princesa.descricao}</p>
+          <button id="selecionarBtn">Selecionar</button>
+        `;
+
+        detalhes.style.display = "inline-block";
+
+        const selecionarBtn = document.getElementById("selecionarBtn");
+        selecionarBtn.addEventListener("click", () => {
+          sessionStorage.setItem('princesaSelecionada', JSON.stringify({
+            nome: princesa.nome,
+            imagem: princesa.imagem
+          }));
+
+          mensagem.textContent = "Personagem selecionada com sucesso.";
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1500);
+        });
+      });
+
+      container.appendChild(card);
+    });
+  })
+  .catch(error => {
+    console.error("Erro ao carregar o JSON:", error);
+  });
+
+  </script>
+
+</body>
+
+</html>
+
+<!-- passo1 -->
+<!-- npm install -g json-server -->
+
+<!-- passo2 -->
+<!-- json-server --watch db.json --port 3001 -->

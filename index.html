@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Disney games</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .cabecario {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            position: relative;
+            height: 100px;
+            background-color: #fae7ec;
+        }
+
+        @media (max-width: 903px) {
+
+            /* ... já existente ... */
+            .logo {
+                width: 290px;
+            }
+        }
+
+        .esquerda,
+        .direita {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .centro {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+        }
+
+        .lupa,
+        .usuario,
+        .sacola {
+            transition: transform 0.3s ease, filter 0.3s ease;
+            cursor: pointer;
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+
+        .lupa:hover,
+        .usuario:hover,
+        .sacola:hover {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+        }
+
+        @media (max-width: 903px) {
+            .cabecario {
+                flex-direction: column;
+                height: auto;
+                padding: 20px 10px;
+            }
+
+            .centro {
+                position: static;
+                transform: none;
+                margin-bottom: 10px;
+            }
+
+            .icones-mobile {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin-top: 10px;
+            }
+
+            .lupa,
+            .usuario,
+            .sacola {
+                width: 80px;
+                height: 80px;
+            }
+
+            .esquerda,
+            .direita {
+                display: none;
+            }
+        }
+
+        @media (min-width: 904px) {
+            .icones-mobile {
+                display: none;
+            }
+        }
+
+        .jogos {
+            padding-bottom: 100px;
+            padding-top: 90px;
+            justify-content: center;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            flex-direction: row;
+        }
+
+        .j1,
+        .j2,
+        .j3,
+        .j4,
+        .j5 {
+            height: 350px;
+            width: 250px;
+            background-color: #ffddfd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 15px;
+            position: relative;
+            transition: all 0.4s ease;
+            margin-bottom: 20px;
+        }
+
+        .j1:hover,
+        .j2:hover,
+        .j3:hover,
+        .j4:hover,
+        .j5:hover:hover {
+            transform: translateY(-10px);
+        }
+
+        .capa {
+            margin-top: 20px;
+            border-radius: 20px;
+            border: solid 3px #f69fd0;
+            width: 210px;
+            height: 140px;
+        }
+
+        button {
+            color: white;
+            margin-top: 60px;
+            background-color: #f69fd0;
+            border-radius: 15px;
+            border: none;
+            width: 150px;
+            height: 25px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #e978b8;
+            transition: 1s;
+        }
+
+        .rodape {
+            background-color: #f7c4e1;
+            color: #e978b8;
+            padding: 40px 20px 20px;
+            font-family: sans-serif;
+            margin-top: 60px;
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-coluna {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-coluna h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .footer-coluna p,
+        .footer-coluna a {
+            font-size: 14px;
+            color: #e978b8;
+            text-decoration: none;
+        }
+
+        .footer-coluna a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-coluna ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-coluna li {
+            margin-bottom: 8px;
+        }
+
+        .social-icons a img {
+            width: 80px;
+            margin-right: 10px;
+            transition: transform 0.3s;
+        }
+
+        .social-icons a img:hover {
+            transform: scale(1.2);
+        }
+
+        .footer-credito {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 480px) {
+            .jogos {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .j1,
+            .j2,
+            .j3,
+            .j4,
+            .j5 {
+                width: 100%;
+                max-width: 350px;
+                margin: 0 auto;
+            }
+
+            .footer-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-coluna {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="cabecario">
+            <div class="esquerda">
+                <img class="lupa" src="img/lupa.png" alt="Buscar" />
+            </div>
+            <div class="centro">
+                <img class="logo" src="img/logo.png" alt="Logo" width="260px" />
+            </div>
+            <div class="direita">
+                <img id="imgUsuario" class="usuario" src="img/usuario.png" alt="Usuário" />
+                <img class="sacola" src="img/sacola.png" alt="Sacola" />
+            </div>
+
+            <!-- Ícones para dispositivos móveis -->
+            <div class="icones-mobile">
+                <img class="lupa" src="img/lupa.png" alt="Buscar" />
+                <img id="imgUsuarioMobile" class="usuario" src="img/usuario.png" alt="Usuário" />
+                <img class="sacola" src="img/sacola.png" alt="Sacola" />
+            </div>
+        </div>
+    </header>
+
+    <div class="jogos">
+        <div class="j1">
+            <img src="img/capa1.png" alt="Capa do Jogo" class="capa" />
+            <h3>Jogo da velha</h3>
+            <a href="jvelha.html"><button>Jogar</button></a>
+        </div>
+
+        <div class="j2">
+            <img src="img/capa2.png" alt="Capa do Jogo" class="capa" />
+            <h3>Seleção de personagem</h3>
+            <a href="seleção.html"><button>Jogar</button></a>
+            
+        </div>
+
+        <div class="j3">
+            <img src="img/capa3.png" alt="Capa do Jogo" class="capa" />
+            <h3>Troca palavras</h3>
+            <a href="t.html"><button>Jogar</button></a>
+            
+        </div>
+
+        <div class="j4">
+            <img src="img/capa4.png" alt="Capa do Jogo" class="capa" />
+            <h3>Jogo da forca</h3>
+            <a href="forca.html"><button>Jogar</button></a>
+        </div>
+
+        <div class="j5">
+            <img src="img/capa5.png" alt="Capa do Jogo" class="capa" />
+            <h3>Jogo da forca</h3>
+            <a href="memória.html"><button>Jogar</button></a>
+        </div>
+
+    </div>
+
+  
+
+
+
+    <footer class="rodape">
+        <div class="footer-container">
+            <div class="footer-coluna">
+                <h4>Sobre</h4>
+                <p>Somos apaixonadas por jogos e experiências divertidas! Explore e jogue com estilo 💖</p>
+            </div>
+            <div class="footer-coluna">
+                <h4>Links</h4>
+                <ul>
+                    <li><a href="#">Início</a></li>
+                    <li><a href="#">Jogos</a></li>
+                    <li><a href="#">Contato</a></li>
+                </ul>
+            </div>
+            <div class="footer-coluna">
+                <h4>Redes sociais</h4>
+                <div class="social-icons">
+                    <a href="#"><img src="img/insta.png" alt="Instagram" /></a>
+                    <a href="#"><img src="img/face.png" alt="Facebook" /></a>
+                    <a href="#"><img src="img/X.png" alt="Twitter" /></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Ao carregar a página, verifica se há princesa selecionada no localStorage
+        window.addEventListener('load', () => {
+            const princesa = sessionStorage.getItem('princesaSelecionada');
+            if (princesa) {
+                try {
+                    const dadosPrincesa = JSON.parse(princesa);
+
+                    // Atualiza a imagem do usuário (desktop)
+                    const imgUsuario = document.getElementById('imgUsuario');
+                    if (imgUsuario) {
+                        imgUsuario.src = dadosPrincesa.imagem;
+                        imgUsuario.alt = dadosPrincesa.nome;
+                    }
+
+                    // Atualiza a imagem do usuário (mobile)
+                    const imgUsuarioMobile = document.getElementById('imgUsuarioMobile');
+                    if (imgUsuarioMobile) {
+                        imgUsuarioMobile.src = dadosPrincesa.imagem;
+                        imgUsuarioMobile.alt = dadosPrincesa.nome;
+                    }
+                } catch (error) {
+                    console.error('Erro ao ler dados da princesa:', error);
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>

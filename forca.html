@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="img/Abap.png">
+  <title>Jogo da Forca da Rapunzel</title>
+  <link rel="stylesheet" href="forca.css">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container">
+    <h1>Jogo da Forca da Rapunzel 🌸</h1>
+    <img src="img/Rfeliz.png" alt="Rapunzel" id="imgStatus" class="img-status">
+    <div class="palavra" id="palavra"></div>
+    <div class="letras" id="letras"></div>
+    <div class="info">
+      <p><strong>Dica:</strong> <span id="dica"></span></p>
+      <p>Erros: <span id="erros">0</span> | Tentativas restantes: <span id="tentativas"></span></p>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div class="botoes-finais">
+      <button id="btnDica">💡 Dica (2x)</button>
+      <button id="continuar" style="display: none;">🌼 Continuar</button>
+      <button id="recomecar" style="display: none;">🔁 Recomeçar</button>
+    </div>
+    <div id="vitoria-banner">🎉 Você avançou para o próximo desafio da torre! 🌸</div>
+  </div>
+
+  <script src="forca.js"></script>
+</body>
+
+</html>

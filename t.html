@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Escolha sua Princesa</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle, white, #ffc9de);
+      color: #444;
+    }
+
+    h1 {
+      margin-top: 30px;
+      font-size: 2.5rem;
+      color: #e978b8;
+    }
+
+    h1 {
+      animation: piscar 2s infinite;
+    }
+
+    @keyframes piscar {
+
+      0%,
+      100% {
+        color: #e978b8;
+      }
+
+      50% {
+        color: #ffb6c1;
+      }
+    }
+
+    .princesas {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin: 40px 20px;
+    }
+
+    .princesa {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid #e978b8;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .princesa:hover {
+      transform: scale(1.1);
+    }
+
+    .princesa img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #jogo {
+      display: none;
+      margin-top: 30px;
+      padding: 0 10px;
+    }
+
+    #tituloFilme {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #e978b8;
+    }
+
+    #fraseCompleta {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #444;
+      margin: 20px 0;
+      min-height: 50px;
+    }
+
+    .dropzone {
+      padding: 10px 20px;
+      border: 3px dashed #888;
+      border-radius: 20px;
+      display: inline-block;
+      min-width: 130px;
+      color: #e978b8;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      vertical-align: middle;
+      background: #fff;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .dropzone.hover {
+      border-color: #4caf50;
+      background: #e8f5e9;
+    }
+
+    .dropzone.filled {
+      border-style: solid;
+      background: #c8e6c9;
+      cursor: default;
+    }
+
+    .opcoes {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .opcao {
+      background: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      border: 2px dashed #e978b8;
+      color: #e978b8;
+      font-weight: bold;
+      cursor: move;
+      user-select: none;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .opcao.selected {
+      border-color: #4caf50;
+      background-color: #e8f5e9;
+      cursor: pointer;
+    }
+
+    /* Responsividade */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+        margin-top: 20px;
+      }
+
+      .princesas {
+        gap: 20px;
+      }
+
+      .princesa {
+        width: 100px;
+        height: 100px;
+      }
+
+      #tituloFilme {
+        font-size: 1.5rem;
+      }
+
+      #fraseCompleta {
+        font-size: 1.3rem;
+      }
+
+      .dropzone {
+        min-width: 110px;
+        padding: 8px 15px;
+        font-size: 1.2rem;
+      }
+
+      .opcao {
+        padding: 8px 15px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        border-style: solid;
+        /* melhor para toque */
+      }
+
+      /* Estilo para input e botão */
+      #addFraseContainer {
+        margin-bottom: 40px;
+      }
+
+      #novaFrase {
+        padding: 8px 10px;
+        font-size: 1rem;
+        border-radius: 10px;
+        border: 1.5px solid #e978b8;
+        width: 250px;
+        max-width: 80%;
+      }
+
+      #btnAddFrase {
+        padding: 8px 15px;
+        font-size: 1rem;
+        border: none;
+        background: #e978b8;
+        color: #fff;
+        font-weight: bold;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-left: 10px;
+        transition: background-color 0.3s;
+      }
+
+      #btnAddFrase:hover {
+        background-color: #e978b8;
+      }
+    }
+
+    /* Estilo para input e botão fora do mobile */
+    #addFraseContainer {
+      margin-bottom: 40px;
+    }
+
+    #novaFrase {
+      padding: 8px 10px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 1.5px solid #e978b8;
+      width: 250px;
+      max-width: 80%;
+    }
+
+    #btnAddFrase {
+      padding: 8px 15px;
+      font-size: 1rem;
+      border: none;
+      background: #e978b8;
+      color: #fff;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: background-color 0.3s;
+    }
+
+    #btnAddFrase:hover {
+      background-color: #e978b8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Escolha sua princesa</h1>
+
+  <div class="princesas">
+    <div class="princesa" data-id="0"><img src="img2/1.png" alt="Tiana" /></div>
+    <div class="princesa" data-id="1"><img src="img2/2.png" alt="Ariel" /></div>
+    <div class="princesa" data-id="2"><img src="img2/3.png" alt="Bela" /></div>
+    <div class="princesa" data-id="3"><img src="img2/4.png" alt="Branca de Neve" /></div>
+  </div>
+
+  <div id="jogo">
+    <div id="tituloFilme"></div>
+    <div id="fraseCompleta">
+      <!-- Frase com espaço em branco (dropzone) aqui -->
+    </div>
+
+    <!-- Container para adicionar frase nova -->
+    <div id="addFraseContainer">
+      <input type="text" id="novaFrase" placeholder="Digite uma nova frase engraçada" />
+      <button id="btnAddFrase">Adicionar frase</button>
+    </div>
+
+    <div class="opcoes" id="opcoes"></div>
+  </div>
+
+  <script>
+    const princesas = [
+      {
+        nome: "Tiana",
+        filme: "A Princesa e o Sapo",
+        palavraBranco: "Sapo",
+        opcoes: ["pau", "sapo", "sanduíche", "carro"],
+      },
+      {
+        nome: "Ariel",
+        filme: "A Pequena Sereia",
+        palavraBranco: "Sereia",
+        opcoes: ["carro", "pintinho", "sereia", "pau"],
+      },
+      {
+        nome: "Bela",
+        filme: "A Bela e a Fera",
+        palavraBranco: "Fera",
+        opcoes: ["fera", "coelho", "carro", "pau"],
+      },
+      {
+        nome: "Branca de Neve",
+        filme: "Branca de Neve e os Sete Anões",
+        palavraBranco: "Sete Anões",
+        opcoes: ["sapo", "sete anões", "pau", "carro"],
+      },
+    ];
+
+    const princesaEls = document.querySelectorAll(".princesa");
+    const jogo = document.getElementById("jogo");
+    const tituloFilme = document.getElementById("tituloFilme");
+    const fraseCompleta = document.getElementById("fraseCompleta");
+    const opcoesContainer = document.getElementById("opcoes");
+
+    const btnAddFrase = document.getElementById("btnAddFrase");
+    const novaFraseInput = document.getElementById("novaFrase");
+
+    let selecionado = null; // para toque
+    let opcoesAtuais = []; // guarda as opções atuais para facilitar o reset
+
+    princesaEls.forEach((p) => {
+      p.addEventListener("click", () => {
+        const id = p.dataset.id;
+        const princesa = princesas[id];
+        tituloFilme.innerText = princesa.filme;
+
+        // Criar frase com dropzone substituindo palavra chave
+        const fraseOriginal = princesa.filme;
+        const palavra = princesa.palavraBranco;
+        const fraseComDrop = fraseOriginal.replace(
+          new RegExp(palavra, "i"),
+          `<span class="dropzone" id="alvo">_______</span>`
+        );
+
+        fraseCompleta.innerHTML = fraseComDrop;
+
+        // Criar opções para arrastar / tocar
+        opcoesAtuais = [...princesa.opcoes]; // copia as opções originais
+        renderOpcoes();
+
+        jogo.style.display = "block";
+        window.scrollTo({ top: jogo.offsetTop, behavior: "smooth" });
+
+        setupDragDrop();
+        setupTouch();
+      });
+    });
+
+    // Função para renderizar as opções atuais no container
+    function renderOpcoes() {
+      opcoesContainer.innerHTML = "";
+      opcoesAtuais.forEach((opcaoTexto) => {
+        const div = document.createElement("div");
+        div.classList.add("opcao");
+        div.setAttribute("draggable", "true");
+        div.innerText = opcaoTexto;
+        opcoesContainer.appendChild(div);
+      });
+    }
+
+    // Evento do botão para adicionar frase nova
+    btnAddFrase.addEventListener("click", () => {
+      const texto = novaFraseInput.value.trim();
+      if (!texto) {
+        alert("Por favor, digite uma frase para adicionar.");
+        return;
+      }
+      // Adiciona a frase nova às opções atuais
+      opcoesAtuais.push(texto);
+      renderOpcoes();
+      setupDragDrop();
+      setupTouch();
+      novaFraseInput.value = "";
+      selecionado = null;
+    });
+
+    function setupDragDrop() {
+      const opcoes = document.querySelectorAll(".opcao");
+      const alvo = document.getElementById("alvo");
+
+      opcoes.forEach((opcao) => {
+        opcao.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text", opcao.innerText);
+        });
+      });
+
+      if (!alvo) return;
+
+      alvo.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        alvo.classList.add("hover");
+      });
+
+      alvo.addEventListener("dragleave", () => {
+        alvo.classList.remove("hover");
+      });
+
+      alvo.addEventListener("drop", (e) => {
+        e.preventDefault();
+        const texto = e.dataTransfer.getData("text");
+        setResposta(texto);
+        alvo.classList.remove("hover");
+      });
+    }
+
+    function setupTouch() {
+      const opcoes = document.querySelectorAll(".opcao");
+      const alvo = document.getElementById("alvo");
+
+      selecionado = null;
+
+      // Ao tocar numa opção, ela fica selecionada
+      opcoes.forEach((opcao) => {
+        opcao.classList.remove("selected");
+        opcao.onclick = () => {
+          opcoes.forEach((o) => o.classList.remove("selected"));
+          opcao.classList.add("selected");
+          selecionado = opcao.innerText;
+        };
+      });
+
+      if (!alvo) return;
+
+      // Ao tocar no alvo, se tiver uma opção selecionada, insere a resposta
+      alvo.onclick = () => {
+        if (selecionado) {
+          setResposta(selecionado);
+          selecionado = null;
+          opcoes.forEach((o) => o.classList.remove("selected"));
+        }
+      };
+    }
+
+    // Função que insere a resposta no dropzone
+    function setResposta(texto) {
+      const alvo = document.getElementById("alvo");
+      if (!alvo) return;
+
+      alvo.innerText = texto;
+      alvo.classList.add("filled");
+      alvo.style.border = "none";
+      alvo.style.cursor = "default";
+
+      // Desabilitar mais drops e cliques
+      alvo.removeEventListener("dragover", preventDefault);
+      alvo.removeEventListener("drop", preventDefault);
+      alvo.onclick = null;
+    }
+
+    function preventDefault(e) {
+      e.preventDefault();
+    }
+  </script>
+</body>
+
+</html>
